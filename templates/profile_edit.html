@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="profile_edit.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <title>Profile Edit</title>
+  </head>
+  <body>
+    <div class="header">
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Hotels</a></li>
+          <li><a href="#">Flights</a></li>
+          <li><a href="#">Car Rentals</a></li>
+          <li><a href="#">Add hotel</a></li>
+        </ul>
+      </nav>
+      <nav>
+        <ul>
+          <li>
+            <a href="signin.html">Sign in</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="add-item-container">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            name="username"
+            class="form-control"
+            value="{{ user.username }}"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            name="email"
+            class="form-control"
+            value="{{ user.email }}"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="first_name">First Name</label>
+          <input
+            type="text"
+            name="first_name"
+            class="form-control"
+            value="{{ user.first_name }}"
+          />
+        </div>
+        <div class="form-group">
+          <label for="last_name">Last Name</label>
+          <input
+            type="text"
+            name="last_name"
+            class="form-control"
+            value="{{ user.last_name }}"
+          />
+        </div>
+        <div class="form-group">
+          <label for="picture">Picture</label>
+          <input
+            type="file"
+            name="picture"
+            class="form-control-file"
+            accept="image/*"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </form>
+    </div>
+  </body>
+</html>
+{% block style %}
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    background-color: #3f51b5;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+
+  .header nav ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .header nav li {
+    margin-left: 20px;
+  }
+
+  .header nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+  }
+
+  .header nav a:hover {
+    color: #cfd8dc;
+  }
+
+  .header .user-controls {
+    display: flex;
+    align-items: center;
+  }
+
+  .header .user-controls .button {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    color: #3f51b5;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin-left: 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  .header .user-controls .button:hover {
+    background-color: #f5f5f5;
+  }
+  @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+  .add-item-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+    height: auto;
+    width: 660px;
+    margin: auto;
+  }
+  .add-item-container h1 {
+    color: black;
+  }
+  form {
+    width: 50%;
+    background-color: #3f51b5;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: white;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+  }
+
+  button[type="submit"] {
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    width: 100px;
+  }
+
+  button[type="submit"]:hover {
+    background-color: green;
+  }
+
+  .errorlist {
+    color: #3f51b5;
+    margin-top: 5px;
+    margin-bottom: 0;
+  }
+
+  .errorlist li {
+    margin-left: 15px;
+    list-style: circle;
+  }
+</style>
+{% endblock %}

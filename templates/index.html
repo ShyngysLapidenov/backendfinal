@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+{% load static %} {% block content %}
+<html>
+  <head>
+    <title>Booking Site</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+  <body>
+    <div class="header">
+      <nav>
+        <ul>
+          <li><a href="{% url '' %}">Home</a></li>
+          <li><a href="{% url 'booking_list' %}">My bookings</a></li>
+          <li><a href="{% url 'cart' %}">Basket</a></li>
+          <li><a href="#">Car Rentals</a></li>
+          <li><a href="{% url 'add_hotel' %}">Add hotel</a></li>
+        </ul>
+      </nav>
+      <nav>
+        <ul>
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'profile' %}">{{ request.user }}</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'signin' %}">Sign in</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    <main>
+      <section class="search">
+        <form method="get" action="{% url 'search' %}">
+          <input
+            type="text"
+            id="hotel-input"
+            name="hotel_name"
+            placeholder="Enter hotel name"
+          /><br />
+
+          <input
+            type="text"
+            id="city-input"
+            name="city_name"
+            placeholder="Enter city name"
+          /><br />
+
+          <button type="submit" class="search-button">Search</button>
+        </form>
+      </section>
+
+      <div class="results">
+        {% for hotel in hotels %}
+        <div class="result-card">
+          <img src="{{hotel.image.url}}" alt="Result Image" />
+          <div class="content">
+            <a href="{% url 'detail' pk=hotel.pk %}"><h3>{{hotel.name}}</h3></a>
+            {% if user.is_staff %}
+            <a
+              style="text-decoration: none"
+              href="{% url 'delete' pk=hotel.pk %}"
+              data-method="delete"
+            >
+              Delete
+            </a>
+            <a
+              style="text-decoration: none"
+              href="{% url 'update' pk=hotel.pk %}"
+              data-method="edit"
+            >
+              Edit
+            </a>
+            {% else %} {% endif %}
+            <p>{{hotel.description}}</p>
+            <div class="price">{{hotel.price|floatformat }}₸</div>
+            <form method="post" action="{% url 'book_hotel' hotel.id %}">
+              {% csrf_token %} {{ form.as_p }}
+              <button type="submit" class="button">Book Now</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </main>
+    <div class="footer">
+      <div class="footer-top">
+        <div class="footer-info">
+          <h3>About Us</h3>
+          <p>
+            We are a leading online travel agency dedicated to providing
+            travelers with the best travel experiences.
+          </p>
+        </div>
+        <div class="footer-info">
+          <h3>Contact Us</h3>
+          <p>Email: info@bookingsite.com</p>
+          <p>Phone: 555-555-5555</p>
+        </div>
+        <div class="footer-info" style="margin-bottom: 20px">
+          <h3>Follow Us</h3>
+          <a href="#" class="fa fa-facebook icon"></a>
+          <a href="#" class="fa fa-twitter icon"></a>
+          <a href="#" class="fa fa-instagram icon"></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2023 Booking Site</p>
+      </div>
+    </div>
+  </body>
+</html>
+{% block styles %}
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .search-button {
+    background-color: #3f51b5;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  .search-button:hover {
+    background-color: #303f9f;
+  }
+
+  select {
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    outline: none;
+    box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
+  }
+
+  input[type="text"] {
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 10px;
+    width: 20%;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(63, 81, 181, 0.5);
+  }
+
+  .icon {
+    text-decoration: none;
+    color: white;
+    width: 40px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .header {
+    background-color: #3f51b5;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+
+  .header nav ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .header nav li {
+    margin-left: 20px;
+  }
+
+  .header nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+  }
+
+  .header nav a:hover {
+    color: #cfd8dc;
+  }
+
+  .header .user-controls {
+    display: flex;
+    align-items: center;
+  }
+
+  .header .user-controls .button {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    color: #3f51b5;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin-left: 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  .header .user-controls .button:hover {
+    background-color: #f5f5f5;
+  }
+
+  .finYourHotel {
+    text-align: left;
+    margin-left: 150px;
+  }
+
+  .footer {
+    background-color: #333;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .footer p {
+    margin: 0;
+  }
+
+  .form-container {
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+  }
+
+  .search {
+    padding: 20px 55px;
+  }
+
+  .form-container h2 {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .form-group input[type="text"],
+  .form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  .form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: url("https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-down-b-512.png")
+      no-repeat right #fff;
+    background-position-x: calc(100% - 10px);
+    background-position-y: 50%;
+    background-size: 18px;
+    padding-right: 30px;
+  }
+
+  .form-group select option {
+    color: #333;
+  }
+
+  .button {
+    background-color: #3f51b5;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+  }
+
+  .button:hover {
+    background-color: #2c3e50;
+  }
+
+  .results {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding: 20px 55px;
+  }
+
+  .result-card {
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+    margin-bottom: 20px;
+    width: calc(33.33% - 20px);
+  }
+
+  .result-card:last-of-type {
+    margin-right: 0;
+  }
+
+  .result-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px 5px 0 0;
+  }
+
+  .result-card .content {
+    padding: 20px;
+  }
+
+  .result-card h3 {
+    font-size: 18px;
+    margin-top: 0;
+  }
+
+  .result-card p {
+    margin-bottom: 10px;
+  }
+
+  .result-card .price {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .result-card {
+      width: 100%;
+      margin-right: 0;
+    }
+  }
+</style>
+{% endblock %} {% endblock %}

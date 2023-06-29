@@ -1,0 +1,13 @@
+{% extends 'index.html' %} {% for hotel in hotels %}
+<div class="result-card">
+  <img src="{{ hotel.image.url }}" alt="Result Image" />
+  <div class="content">
+    <h3>{{ hotel.name }}</h3>
+    <p>{{ hotel.description }}</p>
+    <div class="price">{{ hotel.price }}</div>
+    <button class="button">Book Now</button>
+  </div>
+</div>
+{% empty %}
+<p>No hotels found.</p>
+{% endfor %}
