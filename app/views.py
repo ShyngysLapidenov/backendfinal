@@ -6,6 +6,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 
+
 # Create your views here.
 def register(request):
     if request.method == 'POST':
@@ -16,28 +17,35 @@ def register(request):
     else:
         form = RegistrationForm()
     return render(request, 'registr.html', {'form': form})
+
+
 def signin(request):
-  if request.method == 'POST':
-    username =request.POST['username']
-    password = request.POST['password']
-    user = auth.authenticate(username=username, password=password)
-    if user is not None:
-      auth.login(request, user)
-      return redirect('')
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = auth.authenticate(username=username, password=password)
+        if user is not None:
+            auth.login(request, user)
+            return redirect('')
+        else:
+            messages.info(request, 'Invalid Username or Password')
+            return redirect('signin')
     else:
-      messages.info(request, 'Invalid Username or Password')
-      return redirect('signin')
-  else:
-    return render(request, 'signin.html')
+        return render(request, 'signin.html')
+
+
 def logout(request):
-	auth.logout(request)
-	return redirect('')
+    auth.logout(request)
+    return redirect('')
+
+
 def index(request):
-	hotels = Hotel.objects.all()
-	context = {
-    'hotels': hotels
-	}
-	return render(request, 'index.html', context)
+    hotels = Hotel.objects.all()
+    context = {
+        'hotels': hotels
+    }
+    return render(request, 'index.html', context)
+
 
 def add_hotel(request):
     if request.method == 'POST':
@@ -49,10 +57,13 @@ def add_hotel(request):
         form = HotelForm()
     return render(request, 'add_hotel.html', {'form': form})
 
+
 @login_required
 def profile(request):
     user = request.user
     return render(request, 'profile.html', {'user': user})
+
+
 @login_required
 def profile_edit(request):
     user = request.user
@@ -74,6 +85,8 @@ def profile_edit(request):
         user_form = EditUserForm(instance=user)
         profile_form = EditProfileForm(instance=profile)
     return render(request, 'profile_edit.html', {'user_form': user_form, 'profile_form': profile_form})
+
+
 def hotel_detail(request, pk):
     hotel = get_object_or_404(Hotel, pk=pk)
     comments = Comment.objects.filter(hotel=hotel)
@@ -91,6 +104,8 @@ def hotel_detail(request, pk):
 
     context = {'hotel': hotel, 'comments': comments, 'form': form}
     return render(request, 'hotel_detail.html', context)
+
+
 @login_required
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
@@ -98,10 +113,14 @@ def delete_comment(request, comment_id):
         if request.method == 'POST':
             comment.delete()
     return redirect('detail', pk=comment.hotel.id)
+
+
 def delete_hotel(request, pk):
     myobject = get_object_or_404(Hotel, pk=pk)
     myobject.delete()
     return redirect('')
+
+
 def update_hotel(request, pk):
     hotel = get_object_or_404(Hotel, pk=pk)
     if request.method == 'POST':
@@ -113,20 +132,22 @@ def update_hotel(request, pk):
         form = HotelForm(instance=hotel)
     return render(request, 'update.html', {'form': form})
 
+
 def search_hotel(request):
     hotel_name = request.GET.get('hotel_name')
     city_name = request.GET.get('city_name')
 
     hotels = Hotel.objects.all()
-    
+
     if hotel_name:
         hotels = hotels.filter(name__icontains=hotel_name)
-    
+
     if city_name:
         hotels = hotels.filter(city__name__icontains=city_name)
 
     context = {'hotels': hotels, 'hotel_name': hotel_name, 'city_name': city_name}
     return render(request, 'search_hotel.html', context)
+
 
 @login_required
 def book_hotel(request, pk):
@@ -140,7 +161,8 @@ def book_hotel(request, pk):
             num_guests = form.cleaned_data['num_guests']
 
             # Create a new instance of Booking with the user
-            booking = Booking(hotel=hotel, user=request.user, check_in_date=check_in_date, check_out_date=check_out_date, num_guests=num_guests)
+            booking = Booking(hotel=hotel, user=request.user, check_in_date=check_in_date,
+                              check_out_date=check_out_date, num_guests=num_guests)
             booking.save()
 
             # Redirect to a success page or display a success message
@@ -149,6 +171,8 @@ def book_hotel(request, pk):
         form = BookingForm()
 
     return render(request, 'book_hotel.html', {'form': form, 'hotel': hotel})
+
+
 def booking_list(request):
     if request.user.is_authenticated:
         bookings = Booking.objects.filter(user=request.user)
@@ -156,10 +180,13 @@ def booking_list(request):
     else:
         return redirect('login')
 
+
 def cancel_booking(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
     booking.delete()
     return redirect('booking_list')
+
+
 @login_required
 def add_to_cart(request, hotel_id):
     hotel = Hotel.objects.get(id=hotel_id)
@@ -169,6 +196,8 @@ def add_to_cart(request, hotel_id):
         cart_item.quantity += 1
         cart_item.save()
     return redirect('cart')
+
+
 @login_required
 def remove_from_cart(request, hotel_id):
     hotel = Hotel.objects.get(id=hotel_id)
@@ -180,6 +209,7 @@ def remove_from_cart(request, hotel_id):
     else:
         cart_item.delete()
     return redirect('cart')
+
 
 @login_required
 def cart(request):

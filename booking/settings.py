@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
-import stripe
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -121,11 +120,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-STATIC_URL = '/static/'
+STATIC_URL = '..static/'
 MEDIA_URL = '/imgs/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+
 
 
 STRIPE_PUBLIC_KEY = 'pk_test_51N7oSPGVLctjgJwtMVBTy6AzdJIRSmWJHTmd4sVWDUgRO3Oo30pE37lIkw833ZQVpJmkHAfkVhJ3TnbHpMNldzLT00DLlAFpSd'
